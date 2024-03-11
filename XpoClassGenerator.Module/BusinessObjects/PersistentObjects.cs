@@ -90,7 +90,7 @@ namespace XpoClassGenerator.Module.BusinessObjects
             get => classTemplate;
             set => SetPropertyValue(nameof(ClassTemplate), ref classTemplate, value);
         }
-        
+
         [Size(SizeAttribute.Unlimited)]
         public string PropertyTemplate
         {
@@ -169,6 +169,20 @@ namespace XpoClassGenerator.Module.BusinessObjects
                     return "int";
                 case DBColumnType.String:
                     return "string";
+                case DBColumnType.DateTime:
+                    return nameof(DateTime);
+                case DBColumnType.Decimal:
+                    return "decimal";
+                case DBColumnType.Double:
+                    return "double";
+                case DBColumnType.Boolean:
+                    return "bool";
+                case DBColumnType.Byte:
+                    return "byte";
+                case DBColumnType.ByteArray:
+                    return "byte[]";
+                case DBColumnType.Guid:
+                    return nameof(Guid);
                 // Add more mappings as required
                 default:
                     return "string"; // Default to string if type is unknown
