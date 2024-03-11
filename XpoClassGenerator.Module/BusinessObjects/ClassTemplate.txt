@@ -34,5 +34,7 @@ namespace %NameSpace%
             // Place your initialization code here (https://documentation.devexpress.com/eXpressAppFramework/CustomDocument112834.aspx).
         }
 
+        %Properties%
+
      }
 }

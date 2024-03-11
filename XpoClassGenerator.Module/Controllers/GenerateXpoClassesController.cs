@@ -19,6 +19,7 @@ using System.Text;
 using DevExpress.XtraRichEdit.Model.History;
 using System.ServiceModel.Channels;
 using XpoClassGenerator.Module.BusinessObjects;
+using DevExpress.Persistent.BaseImpl;
 
 namespace XpoClassGenerator.Module.Controllers
 {
@@ -49,18 +50,31 @@ namespace XpoClassGenerator.Module.Controllers
         private void GenerateClasses_Execute(object sender, SimpleActionExecuteEventArgs e)
         {
             var CurrentPersistentObjects = this.View.CurrentObject as PersistentObjects;
-            xpoProvider = XpoDefault.GetConnectionProvider("Integrated Security=SSPI;Pooling=false;Data Source=(localdb)\\mssqllocaldb;Initial Catalog=XafFlechaAmarillaSecurity", AutoCreateOption.SchemaAlreadyExists);
+            xpoProvider = XpoDefault.GetConnectionProvider(CurrentPersistentObjects.ConnectionString, AutoCreateOption.SchemaAlreadyExists);
             reflectionDictionary = new ReflectionDictionary();
             sqlProvider = xpoProvider as ConnectionProviderSql;
             var Tables = sqlProvider.GetStorageTablesList(false);
 
             var DbTables = sqlProvider.GetStorageTables(Tables);
+            Dictionary<string, string> Classes = new Dictionary<string, string>();
             foreach (var item in DbTables)
             {
 
                 var ClassText=CurrentPersistentObjects.GeneratePersistentClasses(new List<DBTable>() { item }, CurrentPersistentObjects.ClassTemplate, CurrentPersistentObjects.PropertyTemplate, CurrentPersistentObjects.NameSpace);
-                //AddClass(reflectionDictionary, item);
+                Classes.Add(item.Name + ".cs", ClassText);
             }
+            var ZipData= PersistentObjects.CreateZipFromDictionary(Classes);
+
+            if (CurrentPersistentObjects.Classes == null) 
+            {
+                CurrentPersistentObjects.Classes = new FileData(CurrentPersistentObjects.Session);
+            }
+               
+
+            CurrentPersistentObjects.Classes.LoadFromStream(CurrentPersistentObjects.NameSpace + ".zip", new MemoryStream(ZipData));
+
+            if (this.View.ObjectSpace.IsModified)
+                this.View.ObjectSpace.CommitChanges();
         }
 
             // Execute your business logic (https://docs.devexpress.com/eXpressAppFramework/112737/).

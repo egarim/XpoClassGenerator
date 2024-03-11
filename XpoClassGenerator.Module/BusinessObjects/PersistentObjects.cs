@@ -10,6 +10,7 @@ using DevExpress.Xpo.DB;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -126,13 +127,39 @@ namespace XpoClassGenerator.Module.BusinessObjects
                     propertiesText.AppendLine(property);
                 }
 
-                classText = classText.Replace("     }", propertiesText.ToString() + "     }"); // Insert properties before closing brace of the class
+                classText = classText.Replace("%Properties%", propertiesText.ToString()); // Insert properties before closing brace of the class
                 classesText.AppendLine(classText);
             }
 
             return classesText.ToString();
         }
+        public static byte[] CreateZipFromDictionary(Dictionary<string, string> files)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                // Create a new zip archive in memory stream
+                using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+                {
+                    foreach (var fileEntry in files)
+                    {
+                        // Create a new entry for each file
+                        var entry = archive.CreateEntry(fileEntry.Key, CompressionLevel.Optimal);
 
+                        // Write the file content to the entry
+                        using (var entryStream = entry.Open())
+                        using (var streamWriter = new StreamWriter(entryStream))
+                        {
+                            streamWriter.Write(fileEntry.Value);
+                        }
+                    }
+                }
+                // It's important to reset the position of the MemoryStream to the beginning
+                memoryStream.Position = 0;
+
+                // Read the memory stream and return the byte array
+                return memoryStream.ToArray();
+            }
+        }
         private static string MapColumnTypeToPropertyType(DBColumnType columnType)
         {
             // This is a very basic mapping, extend according to your needs
