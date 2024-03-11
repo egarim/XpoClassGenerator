@@ -1,0 +1,7 @@
+﻿        private string %Field%;
+        [XafDisplayName("%Property%")]
+        [Persistent("DatabaseColumnName"), RuleRequiredField(DefaultContexts.Save)]
+        public string %Property% {
+            get { return %Field%; }
+            set { SetPropertyValue(nameof(PersistentProperty), ref %Field%, value); }
+        }
