@@ -10,11 +10,13 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="BusinessObjects\ClassTemplate.txt" />
+    <None Remove="BusinessObjects\KeyTemplate.txt" />
     <None Remove="BusinessObjects\PersistentPropertyTemplate.txt" />
     <None Remove="Model.DesignedDiffs.xafml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BusinessObjects\ClassTemplate.txt" />
+    <EmbeddedResource Include="BusinessObjects\KeyTemplate.txt" />
     <EmbeddedResource Include="BusinessObjects\PersistentPropertyTemplate.txt" />
     <EmbeddedResource Include="Model.DesignedDiffs.xafml" />
   </ItemGroup>
